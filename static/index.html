@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+    }
+
+    .celula {
+      width: 100px;
+      height: 100px;
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #000;
+      cursor: pointer;
+    }
+
+    .celula:hover {
+      background-color: #f0f0f0;
+    }
+
+    .mensagem {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jogo da Velha</h1>
+
+  <div class="tabuleiro" id="tabuleiro">
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+    <div class="celula"></div>
+  </div>
+
+  <div class="mensagem" id="mensagem">
+    Vez do jogador: X
+  </div>
+
+  <button onclick="reiniciar()">Reiniciar Jogo</button>
+
+  <script>
+    const celulas = document.querySelectorAll('.celula');
+    const mensagem = document.getElementById('mensagem');
+
+    let jogadorAtual = 'X';
+    let jogoAtivo = true;
+
+    const combinacoesVitoria = [
+      [0,1,2], [3,4,5], [6,7,8], // linhas
+      [0,3,6], [1,4,7], [2,5,8], // colunas
+      [0,4,8], [2,4,6]          // diagonais
+    ];
+
+    celulas.forEach((celula, index) => {
+      celula.addEventListener('click', () => jogar(index));
+    });
+
+    function jogar(index) {
+      if (!jogoAtivo || celulas[index].textContent !== '') return;
+
+      celulas[index].textContent = jogadorAtual;
+
+      if (verificarVitoria()) {
+        mensagem.textContent = `Jogador ${jogadorAtual} venceu! 🎉`;
+        jogoAtivo = false;
+        return;
+      }
+
+      if (verificarEmpate()) {
+        mensagem.textContent = 'Empate! 🤝';
+        jogoAtivo = false;
+        return;
+      }
+
+      jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X';
+      mensagem.textContent = `Vez do jogador: ${jogadorAtual}`;
+    }
+
+    function verificarVitoria() {
+      return combinacoesVitoria.some(combinacao => {
+        return combinacao.every(index => {
+          return celulas[index].textContent === jogadorAtual;
+        });
+      });
+    }
+
+    function verificarEmpate() {
+      return [...celulas].every(celula => celula.textContent !== '');
+    }
+
+    function reiniciar() {
+      celulas.forEach(celula => celula.textContent = '');
+      jogadorAtual = 'X';
+      jogoAtivo = true;
+      mensagem.textContent = 'Vez do jogador: X';
+    }
+  </script>
+
+</body>
+</html>
